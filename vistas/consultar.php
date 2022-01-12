@@ -38,6 +38,7 @@ include("C:\wamp64\www\disema\controller\session.php");
                 <a href="../vistas/descontar.php">Descontar</a>
                 <a href="../vistas/eliminarI.php">Eliminar</a>
             </div>
+        </div>
         <a href="../vistas/xmlInv.php">XML</a>
         <a href="../vistas/jsonInv.php">JSON</a>
         <a href="../vistas/consultarOrden.php">Consultar trabajo</a>
