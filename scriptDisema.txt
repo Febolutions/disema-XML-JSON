@@ -1,0 +1,177 @@
+SCRIPT DISEMA_BD.
+
+CREATE DATABASE disema;
+USE Disema;
+
+CREATE TABLE empleado
+( empleado_id SMALLINT,
+ nombres VARCHAR (100) NOT NULL,
+ ap_paterno VARCHAR (100) NOT NULL,
+ ap_materno VARCHAR (100),
+ RFC VARCHAR (50) NOT NULL UNIQUE,
+ sueldo FLOAT,
+ fecha_inicio_labores DATE,
+ user_name varchar(20),
+ contrasenna varchar(32),
+ rol varchar(30),
+ CONSTRAINT pkempleado PRIMARY KEY (empleado_id )
+); 
+
+CREATE TABLE cliente
+( id_cliente SMALLINT,
+  nombre varchar(50),
+  ap_paterno varchar(30),
+  ap_materno varchar(30),
+  rfc varchar(12),
+  tel varchar(20),
+  cel varchar(20),
+  email varchar(50),
+  direccion varchar(150),
+  empresa varchar(100),
+  CONSTRAINT pkcliente PRIMARY KEY (id_cliente)
+);
+
+CREATE TABLE nota_de_remision
+( folio_remision INTEGER,
+fecha_expedicion DATE,
+descripcion varchar(400),
+monto float,
+CONSTRAINT pkremision PRIMARY KEY (folio_remision)
+);
+
+CREATE TABLE orden_de_trabajo
+(folio_trabajo integer,
+descripcion_disenno varchar(500),
+materiales varchar(200),
+subtotal float,
+iva float,
+total float,
+fecha_entrada DATE,
+fecha_salida DATE,
+anticipo float,
+CONSTRAINT pkfolioT PRIMARY KEY (folio_trabajo)
+);
+
+CREATE TABLE area
+(id_area SMALLINT,
+nombre_area VARCHAR(100),
+id_emp SMALLINT,
+CONSTRAINT pkArea PRIMARY KEY (id_area),
+FOREIGN KEY (id_emp)
+   REFERENCES empleado(empleado_id)
+   ON DELETE CASCADE
+   ON UPDATE NO ACTION
+);
+
+CREATE TABLE inventarios
+(id_material integer,
+nombre_material varchar(200),
+descripcion_m varchar(200),
+existencias smallint,
+fecha DATE,
+CONSTRAINT pkidM PRIMARY KEY (id_material)
+);
+
+CREATE TABLE nota_recepcion_material
+(folio_nota_R smallint,
+id_orden integer,
+id_mater integer,
+cantidad smallint,
+fecha DATE,
+CONSTRAINT pkfolioR PRIMARY KEY (folio_nota_R),
+FOREIGN KEY (id_orden)
+   REFERENCES orden_de_trabajo(folio_trabajo)
+   ON DELETE CASCADE
+   ON UPDATE NO ACTION,
+FOREIGN KEY (id_mater)
+   REFERENCES inventarios(id_material)
+   ON DELETE CASCADE
+   ON UPDATE NO ACTION
+);
+
+CREATE TABLE bitacora
+(id_bitacora integer,
+descripcion_trabajo varchar(500),
+fecha DATE,
+statusOrden varchar(30),
+id_a smallint,
+folio_OT integer,
+id_m integer,
+CONSTRAINT pkbitacora PRIMARY KEY (id_bitacora),
+FOREIGN KEY (id_a)
+   REFERENCES area(id_area)
+   ON DELETE CASCADE
+   ON UPDATE NO ACTION,
+FOREIGN KEY (folio_OT)
+   REFERENCES orden_de_trabajo(folio_trabajo)
+   ON DELETE CASCADE
+   ON UPDATE NO ACTION,
+FOREIGN KEY (id_m)
+   REFERENCES inventarios(id_material)
+   ON DELETE CASCADE
+   ON UPDATE NO ACTION
+);
+
+CREATE TABLE ventas
+(id_ventas integer,
+id_empl smallint,
+folioR integer,
+id_client smallint,
+CONSTRAINT pkVentas PRIMARY KEY (id_ventas),
+FOREIGN KEY (id_empl)
+   REFERENCES empleado(empleado_id)
+   ON DELETE CASCADE
+   ON UPDATE NO ACTION,
+FOREIGN KEY (folioR)
+   REFERENCES nota_de_remision(folio_remision)
+   ON DELETE CASCADE
+   ON UPDATE NO ACTION,
+FOREIGN KEY(id_client)
+   REFERENCES cliente(id_cliente)
+   ON DELETE CASCADE
+   ON UPDATE NO ACTION
+);
+
+
+INSERTS
+
+
+INSERT INTO empleado (empleado_id,nombres,ap_paterno,ap_materno,RFC,sueldo,fecha_inicio_labores,user_name,contrasenna) VALUES (1,'Stephanie Anaid','Martinez','López','SML123456112',1300.00,'2020-07-14','steph',MD5('rockengel'));
+
+
+INSERT INTO cliente (id_cliente,nombre,ap_paterno,ap_materno,rfc,tel,cel,email,direccion,empresa) VALUES (1,'Gloria','Gutiérrez','García','GJG125643152','9514563625','9517895465','GLORIA@hotmail.com','Independencia #502','Graficos Milán');
+INSERT INTO cliente (id_cliente,nombre,ap_paterno,ap_materno,rfc,tel,cel,email,direccion,empresa) VALUES (2,'Santiago','Jimenez','López','SJL125588152','9514759812','9510025364','SANTIAGO@hotmail.com','Libres #205','Independiente');
+INSERT INTO cliente (id_cliente,nombre,ap_paterno,ap_materno,rfc,tel,cel,email,direccion,empresa) VALUES (3,'Gabriela','López','Fernández','GLF125599152','9511425367','9514523987','gabriela@hotmail.com','Aldama #703','Bordados La soledad');
+INSERT INTO cliente (id_cliente,nombre,ap_paterno,ap_materno,rfc,tel,cel,email,direccion,empresa) VALUES (4,'Mario','Haraganes','Castellanos','MHC243643152','9517845126','9510336245','mario@hotmail.com','Xiconténcatl #702','Comercial Meraz');
+INSERT INTO cliente (id_cliente,nombre,ap_paterno,ap_materno,rfc,tel,cel,email,direccion,empresa) VALUES (5,'Oscar','Martínez','Ríos','OMR125678152','9511230549','9510012453','oscar@hotmail.com','El salto #301','Cenaduría Rosita');
+
+INSERT INTO orden_de_trabajo (folio_trabajo,descripcion_disenno,materiales,subtotal,iva,total,fecha_entrada,fecha_salida,anticipo) VALUES (10000,'1 millar/tarjetas de presentación/1cara/blancoynegro','papelsulfatado/14pts/láserAcolor',1002.23,160.35,1162.58,'2021-02-12','2021-02-13',500);
+INSERT INTO orden_de_trabajo (folio_trabajo,descripcion_disenno,materiales,subtotal,iva,total,fecha_entrada,fecha_salida,anticipo) VALUES (10001,'500pzas./invitaciones_para_fiesta/láserAcolor/esquinas_redondeadas','papelsulfatado/14pts/sobre_de_celofan_14x10cm',550.0,88.0,638.0,'2021-02-12','2021-02-14',300);
+INSERT INTO orden_de_trabajo (folio_trabajo,descripcion_disenno,materiales,subtotal,iva,total,fecha_entrada,fecha_salida,anticipo) VALUES (10002,'100pzas./carpetas/offset/2tintaspantone/diseñopersonalizado','papelsulfatado/14pts/barniz_brillante',985.50,157.68,1143.18,'2021-02-25','2021-02-25',700);
+INSERT INTO orden_de_trabajo (folio_trabajo,descripcion_disenno,materiales,subtotal,iva,total,fecha_entrada,fecha_salida,anticipo) VALUES (10003,'3pzas./copias/blancoynegro','papelbond',10.0,0.0,10.0,'2021-03-15','2021-03-15',0.0);
+INSERT INTO orden_de_trabajo (folio_trabajo,descripcion_disenno,materiales,subtotal,iva,total,fecha_entrada,fecha_salida,anticipo) VALUES (10004,'1 millar/tarjetas de presentación/2caras/4x4tintas','papelsulfatado/14pts/offset',880.00,140.8,1020.8,'2021-03-12','2021-03-12',200);
+
+INSERT INTO inventarios (id_material,nombre_material,descripcion_m,existencias,fecha) VALUES (100,'PLUMAS','COLOR_NEGRO/MARCA_BIG',25,'2021-02-12');
+INSERT INTO inventarios (id_material,nombre_material,descripcion_m,existencias,fecha) VALUES (101,'PLAYERAS','TIPO_POLO/MARCA_PLAYERITYS/CHICA',12,'2021-02-12');
+INSERT INTO inventarios (id_material,nombre_material,descripcion_m,existencias,fecha) VALUES (102,'TERMOS','ALUMINIO/750ML./SUBLIMACION',15,'2021-02-12');
+INSERT INTO inventarios (id_material,nombre_material,descripcion_m,existencias,fecha) VALUES (103,'PAPEL SULFATADO','14PTS/MARCA_3M/PLIEGO',100,'2021-02-12');
+INSERT INTO inventarios (id_material,nombre_material,descripcion_m,existencias,fecha) VALUES (104,'TAZAS','PORCELANA/SUBLIMACION/300ML./BLANCAS',30,'2021-02-12');
+INSERT INTO inventarios (id_material,nombre_material,descripcion_m,existencias,fecha) VALUES (105,'PAPEL BOND','BLANCO/12pts.',1000,'2021-02-12');
+
+INSERT INTO nota_de_remision (folio_remision,fecha_expedicion,descripcion,monto) VALUES (1000,'2021-02-12','ANTICIPO',500.00);
+INSERT INTO nota_de_remision (folio_remision,fecha_expedicion,descripcion,monto) VALUES (1001,'2021-02-12','ANTICIPO',200.00);
+INSERT INTO nota_de_remision (folio_remision,fecha_expedicion,descripcion,monto) VALUES (1002,'2021-02-26','ANTICIPO',300.00);
+INSERT INTO nota_de_remision (folio_remision,fecha_expedicion,descripcion,monto) VALUES (1003,'2021-03-15','ANTICIPO',150.00);
+INSERT INTO nota_de_remision (folio_remision,fecha_expedicion,descripcion,monto) VALUES (1004,'2021-03-15','ANTICIPO',250.00);
+
+INSERT INTO area (id_area,nombre_area,id_emp) VALUES (1,'Inventarios',1);
+
+INSERT INTO nota_recepcion_material (folio_nota_R,id_orden,id_mater,cantidad,fecha) VALUES (20000,10000,103,4,'2021-02-12');
+INSERT INTO nota_recepcion_material (folio_nota_R,id_orden,id_mater,cantidad,fecha) VALUES (20001,10001,103,2,'2021-02-12');
+INSERT INTO nota_recepcion_material (folio_nota_R,id_orden,id_mater,cantidad,fecha) VALUES (20002,10002,103,10,'2021-02-13');
+INSERT INTO nota_recepcion_material (folio_nota_R,id_orden,id_mater,cantidad,fecha) VALUES (20003,10003,105,3,'2021-02-15');
+INSERT INTO nota_recepcion_material (folio_nota_R,id_orden,id_mater,cantidad,fecha) VALUES (20004,10004,103,4,'2021-02-16');
+
+INSERT INTO bitacora (id_bitacora,descripcion_trabajo,fecha,statusOrden,id_a,folio_OT,id_m) VALUES (1,'Se realizo la entrega del material','2021-02-12','ACTIVO',1,10000,103);
+
+INSERT INTO ventas (id_ventas,id_empl,folioR,id_client) VALUES (500,1,1000,4);
